@@ -1,0 +1,30 @@
+.container-all,
+.navbar {
+    background-color: #ff3131;
+}
+
+.btn-ubah-profil {
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+
+@media (max-width: 423px) {
+    /* .card-container a {
+        width: 10rem !important;
+    } */
+    .home-card{
+        width: 22rem !important;
+        height: 25rem !important;
+    }
+
+    .home-card img {
+        height: 100% !important;
+    }
+
+    .cart-data-container{
+        border-right: none !important;
+    }
+}

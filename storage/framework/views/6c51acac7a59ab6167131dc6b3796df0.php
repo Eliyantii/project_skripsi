@@ -1,0 +1,111 @@
+
+
+<?php $__env->startSection('js'); ?>
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="SB-Mid-client-WJb9ERfoYhvgNIKN"></script>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="bg-white px-3 py-4 rounded">
+                <h3 class="text-center fw-bold mb-3">Detail Pembelian</h3>
+                <div class="bg-light px-5 rounded">
+                    <?php $totalHarga = 0; ?>
+                    <?php $__currentLoopData = $cart->cartDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cartDetail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $totalHarga += $cartDetail->product->price * $cartDetail->unit; ?>
+                        <div class="row my-3 py-3 border-2 border-bottom">
+                            <div class="col-12 col-md-2 p-0 mb-3 mb-md-0">
+                                <img src="/assets/users/products/<?php echo e($cartDetail->product->imageUser->thumbnail); ?>" class="img-fluid rounded border border-2" style="width: 12rem">
+                            </div>
+                            <div class="col-9 ms-2">
+                                <div class="row">
+                                    <div class="col">
+                                        <p class="fw-bold pb-0 mb-0"><?php echo e(ucwords($cartDetail->product->brand)); ?> <?php echo e(ucwords($cartDetail->product->name)); ?></p>
+                                    </div>
+                                    <div class="col text-end">
+                                        <p class="fw-bold pb-0 mb-0 text-danger"><span class="text-muted">Subtotal : </span> Rp<?php echo e(number_format($cartDetail->product->price * $cartDetail->unit, 2, ',', '.')); ?></p>
+                                    </div>
+                                </div>
+                                <p class="fw-bold pb-0 mb-0"><span class="text-muted">Harga: </span> Rp<?php echo e(number_format($cartDetail->product->price, 2, ',', '.')); ?></p>
+                                <p class="fw-semibold pb-0 mb-0 mt-1 text-danger"><span class="text-muted">Unit:</span> <?php echo e($cartDetail->unit); ?>x</p>
+                                <p class="fw-semibold pb-0 mb-0 mt-1 text-danger"><span class="text-muted">Nomor Mesin:</span> <?php echo e(ucwords($cartDetail->product->machine_number)); ?></p>
+                                <p class="fw-semibold pb-0 mb-0 mt-1 text-danger"><span class="text-muted">Nomor Mesin:</span> <?php echo e($cartDetail->product->frame_number); ?></p>
+                                <p class="fw-semibold pb-0 mb-0 mt-1 text-danger"><span class="text-muted">Transmisi:</span> <?php echo e($cartDetail->product->transmission); ?></p>
+                            </div>
+                        </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <div class="row">
+                        <div class="col text-end">
+                            <p class="fw-bold fs-5"><span class="text-muted">Total :</span> <?php echo e(number_format($totalHarga, 2, ',', '.')); ?></p>
+                        </div>
+                    </div>
+                    <div class="border-1 border-bottom">
+                        <h5 class="border-1 border-bottom py-2">Ringkasan Pembayaran</h5>
+                        <div class="mt-3">
+                            <div class="row justify-content-between">
+                                <div class="col mb-0 pb-0">
+                                    <p class="fw-semibold text-muted">Total Bayar</p>
+                                </div>
+                                <div class="col mb-0 pb-0 text-end">
+                                    <input type="hidden" name="productBill" id="productBill" value="<?php echo e($totalHarga); ?>">
+                                    <p class="fw-semibold">Rp<?php echo e(number_format($totalHarga, 2, ',', '.')); ?></p>
+                                </div>
+                            </div>
+                            <div class="row justify-content-between">
+                                <div class="col mb-0 pb-0">
+                                    <p class="fw-semibold text-muted">Biaya Jasa Aplikasi</p>
+                                </div>
+                                <div class="col mb-0 pb-0 text-end">
+                                    <p class="fw-semibold">Rp<?php echo e(number_format(2000, 2, ',', '.')); ?></p>
+                                </div>
+                            </div>
+                            <div class="row justify-content-between">
+                                <div class="col mb-0 pb-0">
+                                    <p class="fw-semibold text-muted">Biaya Administrasi</p>
+                                </div>
+                                <div class="col mb-0 pb-0 text-end">
+                                    <p class="fw-semibold">Rp<?php echo e(number_format(3000, 2, ',', '.')); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="text-muted fw-bold fs-5">Total Bayar</p>
+                        </div>
+                        <div class="col text-end">
+                            <input type="hidden" name="totalBill" id="totalBill" value="">
+                            <p class="fw-bold fs-5">Rp<span id="totalBillText" name="totalBillText"></span></p>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <?php echo csrf_field(); ?>
+                        <button class="btn btn-danger btn-bayar-checkout btn-send mb-3" type="submit" id="pay-button" onclick="checkout(<?php echo e($cart->id); ?>, '<?php echo e(csrf_token()); ?>')">
+                            Bayar Sekarang
+                        </button>
+                        <button class="btn btn-danger text-white d-none btn-load w-100 checkout-page-btn" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="visually-hidden">Loading...</span>
+                    </button>
+                    </div>
+                </div>
+            
+                <form id="snapCallbackForm" method="POST">
+                    <?php echo csrf_field(); ?>
+                    <input type="hidden" name="snapCallback" id="snapCallback">
+                    <input type="hidden" name="cartId" value="<?php echo e($cart->id); ?>">
+                    <input type="hidden" name="snapToken" id="snapToken">
+            
+                    <?php $__currentLoopData = $cart->cartDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cartDetail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <input type="hidden" id="user_card" name="user_card" value="<?php echo e($cartDetail->user_card); ?>">
+                        <input type="hidden" name="user_family_card" id="user_family_card" value="<?php echo e($cartDetail->user_family_card); ?>">   
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('home.layouts.utama', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Skripsi\program\karunia-motor-eli\karuniaApp\resources\views/user/checkout/checkout.blade.php ENDPATH**/ ?>
